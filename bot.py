@@ -5,16 +5,13 @@ bot.py
 from random import randint
 import discord
 from discord.ext import commands
+import config as conf
 from polls import PollManager
 
 
 # =============================================================================
 # Base functions
 # =============================================================================
-ACTIVE_CHANNELS = [
-]
-BOT_NAME = "Puff's Polls"
-BOT_DESCRIPTION = "For conducting polls among friends, and a driving test if you are ready."
 
 # Sets up poll bot
 intents = discord.Intents.default()
@@ -22,7 +19,7 @@ intents.message_content = True
 bot = commands.Bot(
     command_prefix=commands.when_mentioned_or('puff '),
     intents=intents,
-    description=BOT_DESCRIPTION
+    description=conf.BOT_DESCRIPTION
 )
 polls = PollManager()
 
@@ -35,13 +32,17 @@ async def on_ready() -> None:
     """
     The code in this event is executed when the bot is ready.
     """
+
     print(f'Logged in as {bot.user.name}')
     print(f'discord.py API version: {discord.__version__}')
-    print(f'listening on channels: {ACTIVE_CHANNELS}')
+    print(f'listening on channels: {conf.ACTIVE_CHANNELS}')
     print('Ready to drive!')
 
-    for channel_id in ACTIVE_CHANNELS:
+    for channel_id in conf.ACTIVE_CHANNELS:
         channel = bot.get_channel(channel_id)
+
+        if conf.PURGE_MESSAGES_ON_LOAD:
+            await channel.purge()
 
         await channel.send("Ready to drive!")
 
@@ -54,10 +55,21 @@ async def on_message(message: discord.Message) -> None:
 
     :param message: The message that was sent.
     """
+
+    # Ignore messages from this bot
     if message.author == bot.user or message.author.bot:
         return
 
-    if message.channel.id in ACTIVE_CHANNELS:
+    # Annoy users, half of the time in other channels
+    if message.author.id in conf.FUCK_YOU_USERS \
+        and message.channel.id not in conf.ACTIVE_CHANNELS \
+            and randint(1, 100) > 90:
+
+        await message.reply('Fuck your couch!')
+        return
+
+    # Process command if in active channels
+    if message.channel.id in conf.ACTIVE_CHANNELS:
         await bot.process_commands(message)
 
 
@@ -69,6 +81,11 @@ async def on_reaction_add(reaction: discord.Reaction, user: discord.User) -> Non
     :param reaction: The reaction that was added
     :param user: The user that added the reaction.
     """
+
+    # Ignore reaction if not in active channels
+    if reaction.message.channel.id not in conf.ACTIVE_CHANNELS:
+        return
+
     poll = polls.get_poll(reaction.message.id)
 
     if poll:
@@ -109,4 +126,4 @@ async def d_20(context: commands.Context) -> None:
     await context.send(text)
 
 
-bot.run(BOT_SECRET_KEY)
+bot.run(conf.BOT_SECRET_KEY)

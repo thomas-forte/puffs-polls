@@ -1,0 +1,12 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+    // "editor.formatOnSave": true
+  },
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "terminal.integrated.persistentSessionReviveProcess": "never",
+  "cSpell.words": ["spacy"]
+}

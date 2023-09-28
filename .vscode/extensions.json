@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "ms-python.black-formatter",
+    "streetsidesoftware.code-spell-checker",
+    "ms-python.pylint",
+    "esbenp.prettier-vscode",
+    "ms-python.flake8"
+  ]
+}

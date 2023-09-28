@@ -12,17 +12,17 @@ class PollEmoji:
     """
 
     POLL_NUMBER = {
-        0: '0️⃣',
-        1: '1️⃣',
-        2: '2️⃣',
-        3: '3️⃣',
-        4: '4️⃣',
-        5: '5️⃣',
-        6: '6️⃣',
-        7: '7️⃣',
-        8: '8️⃣',
-        9: '9️⃣',
-        10: '🔟',
+        0: "0️⃣",
+        1: "1️⃣",
+        2: "2️⃣",
+        3: "3️⃣",
+        4: "4️⃣",
+        5: "5️⃣",
+        6: "6️⃣",
+        7: "7️⃣",
+        8: "8️⃣",
+        9: "9️⃣",
+        10: "🔟",
     }
 
     POLL_EMOJI = {}
@@ -34,7 +34,7 @@ class PollEmoji:
         """
         index -> emoji
         """
-        return PollEmoji.POLL_NUMBER.get(index, '🏴‍☠️')
+        return PollEmoji.POLL_NUMBER.get(index, "🏴‍☠️")
 
     @staticmethod
     def emoji_to_index(emoji: str) -> int:
@@ -59,7 +59,7 @@ class Poll:
         self.end_date: datetime = datetime.now() + timedelta(days=1)
 
     def __str__(self) -> str:
-        return f'{self.text} {self.scores()}'
+        return f"{self.text} {self.scores()}"
 
     def vote(self, user_id: int, emoji: str) -> None:
         """
@@ -86,8 +86,7 @@ class Poll:
         return scores
 
     def winner(self) -> str:
-        """
-        """
+        """ """
         # scores = self.scores()
         # winner = { 0: 0 }
         # for option, score in scores.items():
@@ -116,26 +115,26 @@ class PollManager:
         Creates a poll.
         """
 
-        raw_text = ' '.join(args).replace(' -option ', ' -o ')
-        text = raw_text.split(' -o ', 1)[0]
-        raw_options = raw_text.split(' -o ')[1:]
+        raw_text = " ".join(args).replace(" -option ", " -o ")
+        text = raw_text.split(" -o ", 1)[0]
+        raw_options = raw_text.split(" -o ")[1:]
         options: list[str] = [s.strip() for s in raw_options]
 
         if not text or len(options) < 2:
-            await context.send('Bad create command.')
+            await context.send("Bad create command.")
             return
 
         raw_message = (
-            f'Hi @everyone!\n'
-            f'{context.author.mention}\'s bitch ass decided it\'s a good time to conduct a poll.\n'
-            '\n'
-            f'{text}\n'
-            '\n'
+            f"Hi @everyone!\n"
+            f"{context.author.mention}'s bitch ass decided it's a good time to conduct a poll.\n"
+            "\n"
+            f"{text}\n"
+            "\n"
         )
         count = 0
 
         for option in options:
-            raw_message += f'{PollEmoji.index_to_emoji(count)} {option}\n'
+            raw_message += f"{PollEmoji.index_to_emoji(count)} {option}\n"
             count += 1
 
         message = await context.send(raw_message)
@@ -146,7 +145,7 @@ class PollManager:
         self.polls[message.id] = Poll(
             author_id=context.author.id,
             text=text,
-            options=options
+            options=options,
         )
 
         await context.message.delete()
@@ -156,16 +155,16 @@ class PollManager:
         List all polls.
         """
 
-        raw_message = ''
+        raw_message = ""
         count = 1
 
         for poll in self.polls.values():
-            raw_message += f'{count}. {poll}\n'
+            raw_message += f"{count}. {poll}\n"
             count += 1
 
         if not raw_message:
-            raw_message = 'No polls to list.'
+            raw_message = "No polls to list."
         else:
-            raw_message = 'Polls found:\n' + raw_message
+            raw_message = "Polls found:\n" + raw_message
 
         await context.send(raw_message)

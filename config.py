@@ -15,5 +15,9 @@ PURGE_MESSAGES_ON_LOAD = True
 FUCK_YOU_USERS = [
 ]
 
+# Ai options
+LOAD_AI = True
+ENABLE_AI_DEBUG = True
+
 BOT_NAME = "Puff's Polls"
-BOT_DESCRIPTION = 'For conducting polls among friends, and a driving test if you are ready.'
+BOT_DESCRIPTION = "Provides the tools to pass a driving test."
